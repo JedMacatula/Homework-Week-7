@@ -14,13 +14,19 @@ public class CoffeeApp extends Application
 {
     Pane myPane = new Pane();
     Text enterEmailText = new Text(110, 150, "Enter Email");
-    Text welcomeText = new Text(220, 60, "Welcome");
+    Text welcomeText = new Text(220, 75, "Welcome");
     Text enterOrderText = new Text(110, 150, "Enter Order");
+    Text enterFirstText = new Text(110, 120, "First Name");
+    Text enterLastText = new Text(110, 160, "Last Name");
+    Text makeAccountText = new Text(210, 75, "Create Account");
     TextField enterEmailField = new TextField();
     TextField enterOrderField = new TextField();
+    TextField enterFirstField = new TextField();
+    TextField enterLastField = new TextField();
     Button enterEmailButton = new Button("Enter");
     Button completeOrderButton = new Button("Complete Order");
-    String email, newCustomerFirst, newCustomerLast;
+    Button confirmAccountButton = new Button("Confirm");
+    String email, myOrder, newCustomerFirst, newCustomerLast;
     
     @Override
     public void start(Stage primaryStage) 
@@ -38,12 +44,31 @@ public class CoffeeApp extends Application
         completeOrderButton.setLayoutX(320);
         completeOrderButton.setLayoutY(135);
         
+        enterFirstField.setLayoutX(175);
+        enterFirstField.setLayoutY(105);
+        enterLastField.setLayoutX(175);
+        enterLastField.setLayoutY(145);
+        confirmAccountButton.setLayoutX(255);
+        confirmAccountButton.setLayoutY(180);
+        
         completeOrderButton.setOnAction(new EventHandler<ActionEvent>() 
         {
             @Override
             public void handle(ActionEvent event) 
             {
-                
+                myOrder = enterOrderField.getText();
+            }
+        });
+        
+        confirmAccountButton.setOnAction(new EventHandler<ActionEvent>() 
+        {
+            @Override
+            public void handle(ActionEvent event) 
+            {
+                newCustomerFirst = enterFirstField.getText();
+                newCustomerLast = enterLastField.getText();
+                myPane.getChildren().removeAll(makeAccountText, enterFirstText, enterLastText, enterFirstField, enterLastField, confirmAccountButton);
+                myPane.getChildren().addAll(welcomeText, enterOrderText, enterOrderField, completeOrderButton);
             }
         });
         
@@ -55,13 +80,13 @@ public class CoffeeApp extends Application
                 email = enterEmailField.getText();
                 myPane.getChildren().removeAll(enterEmailText, enterEmailField, enterEmailButton);
                 
-                if(1 == 1)//if email is found display menu
+                if(1 == 2)//if email is found display menu
                 {
                     myPane.getChildren().addAll(welcomeText, enterOrderText, enterOrderField, completeOrderButton);
                 }
                 else
                 {
-                    
+                    myPane.getChildren().addAll(makeAccountText, enterFirstText, enterLastText, enterFirstField, enterLastField, confirmAccountButton);
                 }
             }
         });
