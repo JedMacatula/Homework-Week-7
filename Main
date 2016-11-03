@@ -10,6 +10,8 @@ import javafx.stage.Stage;
 import javafx.scene.text.Text;
 import javafx.scene.control.TextField;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CoffeeApp extends Application 
 {
@@ -28,20 +30,12 @@ public class CoffeeApp extends Application
     Button completeOrderButton = new Button("Complete Order");
     Button confirmAccountButton = new Button("Confirm");
     String email, myOrder, newCustomerFirst, newCustomerLast;
+    Statement statement;
+    ResultSet resultSet;
     
     @Override
     public void start(Stage primaryStage) throws SQLException, ClassNotFoundException 
     {
-        Class.forName("com.mysql.jdbc.Driver");
-        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/coffeedatabase", "root", "Password");
-        
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery ("select First, Last, myEmail from customer where ID " + " = 1");
-        while (resultSet.next()) 
-        {
-            System.out.println(resultSet.getString(1) + " " + resultSet.getString(2) + " " + resultSet.getString(3));
-        }
-        
         Scene scene = new Scene(myPane, 500, 300);
         
         enterEmailField.setLayoutX(175);
@@ -88,23 +82,57 @@ public class CoffeeApp extends Application
             @Override
             public void handle(ActionEvent event) 
             {
-                email = enterEmailField.getText();
-                myPane.getChildren().removeAll(enterEmailText, enterEmailField, enterEmailButton);
-                
-                if(1 == 2)//if email is found display menu
-                {
-                    myPane.getChildren().addAll(welcomeText, enterOrderText, enterOrderField, completeOrderButton);
-                }
-                else
-                {
-                    myPane.getChildren().addAll(makeAccountText, enterFirstText, enterLastText, enterFirstField, enterLastField, confirmAccountButton);
-                }
+                initializeDB();
+                enterEmail();
             }
         });
         
         primaryStage.setTitle("Coffee App");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+    
+    private void initializeDB()
+    {
+        try
+        {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/coffeedatabase", "root", "Password");
+            statement = connection.createStatement();
+        }
+        catch (Exception ex)
+        {
+            System.out.println("Error in initializeDB function.");
+        }
+    }
+    
+    private void enterEmail()
+    {
+        email = enterEmailField.getText();
+        myPane.getChildren().removeAll(enterEmailText, enterEmailField, enterEmailButton);
+        System.out.println(email);
+        
+        try
+        {
+            resultSet = statement.executeQuery ("select Email from customer where Email" + " = " + "'" + email+ "'");
+            while(resultSet.next())
+            {
+                System.out.println(resultSet.getString(1));
+            }
+        }
+        catch(Exception ex)
+        {
+            System.out.println("Error in email check function.");
+        }
+        
+        if(false)//if email is found display menu
+        {
+            myPane.getChildren().addAll(welcomeText, enterOrderText, enterOrderField, completeOrderButton);
+        }
+        else
+        {
+            myPane.getChildren().addAll(makeAccountText, enterFirstText, enterLastText, enterFirstField, enterLastField, confirmAccountButton);
+        }
     }
 
     public static void main(String[] args) 
