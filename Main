@@ -9,6 +9,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
 import javafx.scene.control.TextField;
+import java.sql.*;
 
 public class CoffeeApp extends Application 
 {
@@ -29,8 +30,18 @@ public class CoffeeApp extends Application
     String email, myOrder, newCustomerFirst, newCustomerLast;
     
     @Override
-    public void start(Stage primaryStage) 
+    public void start(Stage primaryStage) throws SQLException, ClassNotFoundException 
     {
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/coffeedatabase", "root", "Password");
+        
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery ("select First, Last, myEmail from customer where ID " + " = 1");
+        while (resultSet.next()) 
+        {
+            System.out.println(resultSet.getString(1) + " " + resultSet.getString(2) + " " + resultSet.getString(3));
+        }
+        
         Scene scene = new Scene(myPane, 500, 300);
         
         enterEmailField.setLayoutX(175);
@@ -60,10 +71,10 @@ public class CoffeeApp extends Application
             }
         });
         
-        confirmAccountButton.setOnAction(new EventHandler<ActionEvent>() 
+        confirmAccountButton.setOnAction(new EventHandler<ActionEvent>()
         {
             @Override
-            public void handle(ActionEvent event) 
+            public void handle(ActionEvent event)
             {
                 newCustomerFirst = enterFirstField.getText();
                 newCustomerLast = enterLastField.getText();
